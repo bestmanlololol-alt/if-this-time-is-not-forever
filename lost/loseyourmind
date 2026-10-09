@@ -1,4 +1,4 @@
---// Azure UI Library (extracted)
+--// Synthesis UI Library (extracted)
 --// Usage: local library = Library.new(); library:load()
 --// local tab = library:create_tab("Main")
 --// local mod = tab:create_module({title="X", description="Y", flag="x", section="left", callback=function(s) end})
@@ -207,16 +207,16 @@ local Config = setmetatable({
     save = function(self, file_name, config)
         local ok, result = pcall(function()
             local flags = HttpService:JSONEncode(config)
-            writefile('Azure/'..file_name..'.json', flags)
+            writefile('Synthesis/'..file_name..'.json', flags)
         end)
         if not ok then warn('failed to save config', result) end
     end,
     load = function(self, file_name, config)
         local ok, result = pcall(function()
-            if not isfile('Azure/'..file_name..'.json') then
+            if not isfile('Synthesis/'..file_name..'.json') then
                 self:save(file_name, config); return
             end
-            local flags = readfile('Azure/'..file_name..'.json')
+            local flags = readfile('Synthesis/'..file_name..'.json')
             if not flags then self:save(file_name, config); return end
             return HttpService:JSONDecode(flags)
         end)
@@ -263,10 +263,10 @@ function Library:create_notification_root()
     local function tween(object, duration, properties, style, direction)
         return TweenService:Create(object, TweenInfo.new(duration, style or Enum.EasingStyle.Quint, direction or Enum.EasingDirection.Out), properties)
     end
-    local root = CoreGui:FindFirstChild('AzureNotificationRoot')
+    local root = CoreGui:FindFirstChild('SynthesisNotificationRoot')
     if root then root:Destroy() end
     local notification_root = Instance.new('ScreenGui')
-    notification_root.Name = 'AzureNotificationRoot'
+    notification_root.Name = 'SynthesisNotificationRoot'
     notification_root.ResetOnSpawn = false
     notification_root.IgnoreGuiInset = true
     notification_root.Parent = CoreGui
@@ -493,14 +493,14 @@ function Library:remove_table_value(__table, table_value)
 end
 
 function Library:create_ui()
-    local old_Azure = CoreGui:FindFirstChild('Azure')
-    if old_Azure then Debris:AddItem(old_Azure, 0) end
+    local old_Synthesis = CoreGui:FindFirstChild('Synthesis')
+    if old_Synthesis then Debris:AddItem(old_Synthesis, 0) end
 
-    local AzureUI = Instance.new('ScreenGui')
-    AzureUI.ResetOnSpawn = false
-    AzureUI.Name = 'Azure'
-    AzureUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    AzureUI.Parent = CoreGui
+    local SynthesisUI = Instance.new('ScreenGui')
+    SynthesisUI.ResetOnSpawn = false
+    SynthesisUI.Name = 'Synthesis'
+    SynthesisUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    SynthesisUI.Parent = CoreGui
 
     local Container = Instance.new('Frame')
     Container.ClipsDescendants = true
@@ -514,10 +514,10 @@ function Library:create_ui()
     Container.Active = true
     Container.BorderSizePixel = 0
     Container.ZIndex = 2
-    Container.Parent = AzureUI
+    Container.Parent = SynthesisUI
 
     local function set_gui_visibility(state)
-        AzureUI.Enabled = state
+        SynthesisUI.Enabled = state
         Container.Visible = state
     end
 
@@ -587,20 +587,20 @@ function Library:create_ui()
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIListLayout.Parent = Tabs
 
-    local AzureIcon = Instance.new('ImageLabel')
-    AzureIcon.Name = 'AzureIcon'
-    AzureIcon.BackgroundTransparency = 1
-    AzureIcon.Position = UDim2.new(0.02, 0, 0.049, 0)
-    AzureIcon.Size = UDim2.new(0, 25, 0, 25)
-    AzureIcon.AnchorPoint = Vector2.new(0, 0.5)
-    AzureIcon.Image = 'rbxassetid://86155014390461'
-    AzureIcon.ScaleType = Enum.ScaleType.Fit
-    AzureIcon.Parent = Handler
+    local SynthesisIcon = Instance.new('ImageLabel')
+    SynthesisIcon.Name = 'SynthesisIcon'
+    SynthesisIcon.BackgroundTransparency = 1
+    SynthesisIcon.Position = UDim2.new(0.02, 0, 0.049, 0)
+    SynthesisIcon.Size = UDim2.new(0, 25, 0, 25)
+    SynthesisIcon.AnchorPoint = Vector2.new(0, 0.5)
+    SynthesisIcon.Image = 'rbxassetid://86155014390461'
+    SynthesisIcon.ScaleType = Enum.ScaleType.Fit
+    SynthesisIcon.Parent = Handler
 
     local ClientName = Instance.new('TextLabel')
     ClientName.Font = Enum.Font.GothamBold
     ClientName.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ClientName.Text = 'Zure'
+    ClientName.Text = 'Synthesis'
     ClientName.Name = 'ClientName'
     ClientName.Size = UDim2.new(0, 31, 0, 13)
     ClientName.AnchorPoint = Vector2.new(0, 0.5)
@@ -667,7 +667,7 @@ function Library:create_ui()
     local UIScale = Instance.new('UIScale')
     UIScale.Parent = Container
 
-    self._ui = AzureUI
+    self._ui = SynthesisUI
 
     local function on_drag(input, process)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -702,7 +702,7 @@ function Library:create_ui()
         Connections:disconnect_all()
     end)
 
-    function self:UIVisiblity() AzureUI.Enabled = not AzureUI.Enabled end
+    function self:UIVisiblity() SynthesisUI.Enabled = not SynthesisUI.Enabled end
 
     function self:change_visiblity(state)
         if state then
@@ -716,7 +716,7 @@ function Library:create_ui()
 
     function self:load()
         local content = {}
-        for _, object in AzureUI:GetDescendants() do
+        for _, object in SynthesisUI:GetDescendants() do
             if not object:IsA('ImageLabel') then continue end
             table.insert(content, object)
         end
@@ -736,7 +736,7 @@ function Library:create_ui()
         self._ui_loaded = true
     end
 
-    function self:update_tabs(tab) -- (rest of implementation preserved below)
+    function self:update_tabs(tab)
         for _, object in ipairs(Tabs:GetChildren()) do
             if object.Name ~= 'Tab' then continue end
             if object == tab then
